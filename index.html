@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Catalog Quick Order - Shopping Cart</title>
+	<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+	<header><nav class="utility-bar" aria-label="Quick navigation"><button class="utility-item" id="menuButton" aria-label="Open menu"><span class="utility-icon menu-icon"></span><span class="utility-label">Menu</span></button><button class="utility-item" aria-label="Select vehicle"><span class="utility-icon vehicle-icon"></span><span class="utility-label">Vehicle Selector</span></button><button class="utility-item" id="searchButton" aria-label="Search"><span class="utility-icon search-icon"></span><span class="utility-label">Search</span></button><button class="utility-item" aria-label="Shopping cart"><span class="utility-icon cart-icon"></span><span class="cart-count">(0)</span></button></nav><div class="brand-bar"><div class="logo">LMC<small>TRUCK.</small></div></div><div class="vehicle-note">You have not selected any vehicle <a href="#">(edit)</a></div></header>
+	<main><section class="checkout-steps" aria-label="Checkout progress"><div class="step active"><div class="step-number">1</div>Cart</div><div class="step"><div class="step-number">2</div>Shipping</div><div class="step"><div class="step-number">3</div>Payment</div><div class="step"><div class="step-number">4</div>Confirm</div><div class="step"><div class="step-number">5</div>Complete</div></section><h1>Cart</h1><section class="order-panel"><div class="panel-heading"><strong>Order by Part Number</strong><span class="chevron" aria-hidden="true"></span></div><table class="order-table"><thead><tr><th>Part number</th><th>Quantity</th><th>Product name and Description <span class="desktop-only">(Appear after part number entered)</span></th><th>Unit price</th><th>Delete</th></tr></thead><tbody id="orderRows"><tr><td><input class="part-number" aria-label="Part number"></td><td><input class="quantity" aria-label="Quantity" type="number" min="1" value="1"></td><td class="description"></td><td class="price"></td><td><button class="delete" aria-label="Delete row">×</button></td></tr></tbody></table><div class="actions"><button id="addRow">Add Row</button><span></span><button id="clearAll">Clear All</button><button id="addCart">Add to cart</button><button id="upload">Upload</button></div></section><p class="empty-message" id="emptyMessage">Your Shopping Cart is empty!</p></main>
+	<footer><div><h2>CUSTOMER<br>SERVICE</h2><a href="#">Contact Us</a><a href="#">Order Status</a></div><div><h2>ABOUT</h2><a href="#">About Us</a><a href="#">LMC Truck Life</a></div><div><h2>INFORMATION</h2><a href="#">SHIPPING</a><a href="#">Returns</a></div><div><h2>FREE CATALOGS</h2><a href="#">Order a Catalog</a><a href="#">Download Catalogs</a></div></footer><div class="toast" id="toast" role="status"></div>
+	<script src="script.js"></script>
+</body>
+</html>
+
