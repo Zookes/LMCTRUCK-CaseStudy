@@ -10,9 +10,9 @@ I chose LMC Truck because it is a focused ecommerce site for classic-truck parts
 
 This prototype is a rough working copy built with plain HTML, CSS, and JavaScript. It includes the page structure, responsive layout, part-number order table, cart count, and basic row controls.
 
-**Live prototype:** Add the GitHub Pages or Vercel URL here after deployment.
+**Live prototype:** https://zookes.github.io/LMCTRUCK-CaseStudy/
 
-**Source repository:** Add the GitHub repository URL here after pushing the project.
+**Source repository:** https://github.com/Zookes/LMCTRUCK-CaseStudy
 
 ## Reflection
 
