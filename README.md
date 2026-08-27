@@ -1,19 +1,36 @@
-# LMC Truck Quick-Order Case Study
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Case-study scan
+## Getting Started
 
-**Site:** [LMC Truck](https://www.lmctruck.com/)
+First, run the development server:
 
-I chose LMC Truck because it is a focused ecommerce site for classic-truck parts with a strong catalog and vehicle-selection workflow. For this first prototype attempt, I recreated the empty quick-order shopping cart page: [Catalog Quick Order](https://www.lmctruck.com/cart?quickorder=true).
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-## Prototype
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-This prototype is a rough working copy built with plain HTML, CSS, and JavaScript. It includes the page structure, responsive layout, part-number order table, cart count, and basic row controls.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-**Live prototype:** https://zookes.github.io/LMCTRUCK-CaseStudy/
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-**Source repository:** https://github.com/Zookes/LMCTRUCK-CaseStudy
+## Learn More
 
-## Reflection
+To learn more about Next.js, take a look at the following resources:
 
-I had the AI reproduce the quickorder page on LMC truck, after asking it Github's COPILOT if it would be able to do it based off of a link. It said yes, so I submitted the lmctruck.com/quickorder link, and since the local file was blank, it pulled a the browser snapshot and then screenshoted it to replicate. It did that after a little bit and then I had it organize the files into seperate files as I like my langauges separated. The next issue I ran into was that it was super zoomed in so I wanted that handled. One improvement off of this original model was the buttons look wrong and some of the header stuff is very wrong in my opinion. 
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
