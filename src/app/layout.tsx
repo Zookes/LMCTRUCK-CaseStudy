@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ShopProvider } from "@/lib/shop/ShopProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -62,7 +63,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {children}
+        <ShopProvider>{children}</ShopProvider>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: serializedStructuredData }}
