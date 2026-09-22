@@ -14,6 +14,25 @@ pnpm dev
 bun dev
 ```
 
+## Production and analytics
+
+- Production site: https://lmctruck-case-study.vercel.app/
+- GitHub repository: https://github.com/Zookes/LMCTRUCK-CaseStudy
+- Google Analytics 4 measurement ID: `G-4X8Z994TYM`
+
+The site uses `GoogleAnalytics` from `@next/third-parties/google` in the shared App Router layout. In the GA4 web data stream, keep Enhanced measurement enabled, including the browser-history changes setting, so client-side navigation is tracked without adding duplicate manual page-view events.
+
+Vercel is connected to GitHub. From this project directory, commit and push changes to deploy:
+
+```bash
+npm run build
+git add src/app/layout.tsx README.md package.json package-lock.json
+git commit -m "Add Google Analytics 4"
+git push
+```
+
+After Vercel finishes deploying, use the GA4 web data stream's **Test** button to open the production URL. Interact with the page and navigate between routes if available, then check **Reports > Realtime** for the active user and page-view activity. A successful local build verifies the code compiles; it does not confirm that the live deployment is sending data until the Test view or Realtime report shows it.
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.

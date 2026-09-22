@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -12,9 +13,46 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+const pageUrl = siteUrl ? new URL("/", siteUrl).toString() : "/";
+
+const structuredData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "1973–1987 Chevy and GMC Truck Parts",
+    description:
+      "Browse restoration and replacement parts for 1973–1987 Chevy and GMC trucks. Select your exact vehicle or shop by part category.",
+    url: pageUrl,
+    breadcrumb: { "@id": `${pageUrl}#breadcrumb` },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": `${pageUrl}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: pageUrl },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "1973–1987 Chevy and GMC Truck Parts",
+        item: pageUrl,
+      },
+    ],
+  },
+];
+
+const serializedStructuredData = JSON.stringify(structuredData).replace(
+  /[<>&]/g,
+  (character) => ({ "<": "\\u003c", ">": "\\u003e", "&": "\\u0026" })[character]!,
+);
+
 export const metadata: Metadata = {
-  title: "LF Truck Parts - Quick Order",
-  description: "Quick-order restoration parts from LF Truck Parts.",
+  title: "1973–1987 Chevy and GMC Truck Parts | LFTruck",
+  description:
+    "Browse restoration and replacement parts for 1973–1987 Chevy and GMC trucks. Select your exact vehicle or shop by part category.",
+  metadataBase: siteUrl ? new URL(siteUrl) : undefined,
+  alternates: { canonical: "/" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -23,7 +61,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: serializedStructuredData }}
+        />
+        <GoogleAnalytics gaId="G-4X8Z994TYM" />
+      </body>
     </html>
   );
 }
