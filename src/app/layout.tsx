@@ -49,7 +49,7 @@ const serializedStructuredData = JSON.stringify(structuredData).replace(
 );
 
 export const metadata: Metadata = {
-  title: "1973–1987 Chevy and GMC Truck Parts | LFTruck",
+  title: "LF Truck",
   description:
     "Browse restoration and replacement parts for 1973–1987 Chevy and GMC trucks. Select your exact vehicle or shop by part category.",
   metadataBase: siteUrl ? new URL(siteUrl) : undefined,

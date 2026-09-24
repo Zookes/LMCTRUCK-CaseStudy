@@ -5,16 +5,16 @@ import { startTransition, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { catalog, categories, fitmentLabel, getFitmentStatus, type Category, formatPrice } from "@/lib/shop/catalog";
 import { useShop } from "@/lib/shop/ShopProvider";
-import { ProductIllustration } from "./ShopChrome";
+import { ProductIllustration, VehiclePicker } from "./ShopChrome";
 
 type Subcategory = { label: string; value: string };
-type DirectoryCategory = { category: Category; title: string; description: string; imageLabel: string; subcategories: Subcategory[] };
+type DirectoryCategory = { category: Category; title: string; description: string; imageLabel: string; illustrationVariant: "lighting" | "body" | "suspension" | "dashboard"; subcategories: Subcategory[] };
 
 const directoryCategories: DirectoryCategory[] = [
-  { category: "Dashboard hardware", title: "Interior and dash", description: "Trim, panels, lenses, and small hardware for a cleaner cab interior.", imageLabel: "Illustration: charcoal dash bezel", subcategories: [{ label: "Dash trim and panels", value: "dash-trim" }, { label: "Instrument cluster", value: "instrument-cluster" }] },
-  { category: "Body panels", title: "Body and exterior", description: "Repair panels, handles, mirrors, emblems, and exterior weather seals.", imageLabel: "Illustration: silver door skin", subcategories: [{ label: "Exterior panels", value: "exterior-panels" }, { label: "Weatherstripping and seals", value: "weatherstripping" }] },
-  { category: "Lighting", title: "Lighting and electrical", description: "Headlights, signal lenses, marker lamps, and auxiliary lighting parts.", imageLabel: "Illustration: round LED headlamp", subcategories: [{ label: "Headlights", value: "headlights" }, { label: "Tail and signal lights", value: "signal-lights" }, { label: "Marker and auxiliary lights", value: "marker-lights" }] },
-  { category: "Suspension", title: "Suspension and steering", description: "Bushings, brackets, shackles, and front-end restoration components.", imageLabel: "Illustration: black steel bracket pair", subcategories: [{ label: "Suspension hardware", value: "suspension-hardware" }, { label: "Steering", value: "steering" }] },
+  { category: "Dashboard hardware", title: "Interior and dash", description: "Trim, panels, lenses, and small hardware for a cleaner cab interior.", imageLabel: "Interior and dash", illustrationVariant: "dashboard", subcategories: [{ label: "Dash trim and panels", value: "dash-trim" }, { label: "Instrument cluster", value: "instrument-cluster" }] },
+  { category: "Body panels", title: "Body and exterior", description: "Repair panels, handles, mirrors, emblems, and exterior weather seals.", imageLabel: "Body and exterior", illustrationVariant: "body", subcategories: [{ label: "Exterior panels", value: "exterior-panels" }, { label: "Weatherstripping and seals", value: "weatherstripping" }] },
+  { category: "Lighting", title: "Lighting and electrical", description: "Headlights, signal lenses, marker lamps, and auxiliary lighting parts.", imageLabel: "Lighting and electrical", illustrationVariant: "lighting", subcategories: [{ label: "Headlights", value: "headlights" }, { label: "Tail and signal lights", value: "signal-lights" }, { label: "Marker and auxiliary lights", value: "marker-lights" }] },
+  { category: "Suspension", title: "Suspension and steering", description: "Bushings, brackets, shackles, and front-end restoration components.", imageLabel: "Suspension and steering", illustrationVariant: "suspension", subcategories: [{ label: "Suspension hardware", value: "suspension-hardware" }, { label: "Steering", value: "steering" }] },
 ];
 
 const productSubcategories: Record<string, string> = {
@@ -55,7 +55,6 @@ function SearchBar({ value, onChange, onSubmit }: { value: string; onChange: (va
 }
 
 export default function ShopParts() {
-  const { vehicle } = useShop();
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category | "">("");
@@ -90,14 +89,14 @@ export default function ShopParts() {
   const resetFilters = () => { setQuery(""); setCategory(""); setSubcategory(""); setSort("featured"); setBrowseAll(false); router.push("/shop"); };
   const updateSort = (nextSort: string) => { setSort(nextSort); goToListing({ query, category, subcategory, sort: nextSort }); };
   return <main className="shop-page page-wrap">
-    <div className="page-heading"><div><span className="eyebrow">Parts catalog</span><h1>{showDirectory ? "Shop Parts by Category" : activeDirectoryCategory?.title || (query ? "Search results" : "Shop parts")}</h1><p>{showDirectory ? "Start with a category, or search the complete catalog by name, part number, or keyword." : activeDirectoryCategory?.description || "Browse products, compare details, and choose a part for your truck project."}</p></div><div className="vehicle-callout">{vehicle ? `Filtering for ${vehicle.year} ${vehicle.make} ${vehicle.model}` : "Select a vehicle to see fitment"}</div></div>
+    <div className="page-heading shop-page-heading"><div><h1>{showDirectory ? "Shop Parts" : activeDirectoryCategory?.title || (query ? "Search results" : "Shop parts")}</h1>{!showDirectory && <p>{activeDirectoryCategory?.description || "Browse products, compare details, and choose a part for your truck project."}</p>}</div><div className="vehicle-callout"><VehiclePicker compact /></div></div>
     <SearchBar value={query} onChange={setQuery} onSubmit={() => goToListing({ query: query.trim(), category, subcategory, sort })} />
     {showDirectory ? <CategoryDirectory /> : <Listing products={products} category={category} subcategory={subcategory} sort={sort} query={query} activeDirectoryCategory={activeDirectoryCategory} onCategoryChange={(next) => goToListing({ query, category: next, sort })} onSortChange={updateSort} resetFilters={resetFilters} />}
   </main>;
 }
 
 function CategoryDirectory() {
-  return <section className="category-directory" aria-labelledby="category-directory-heading"><div className="directory-heading"><div><span className="eyebrow">Browse the catalog</span><h2 id="category-directory-heading">Find parts by system</h2></div><a className="button ghost" href="/shop?all=1">Browse all parts</a></div><div className="category-directory-grid">{directoryCategories.map((entry) => <article className="category-directory-card" key={entry.category}><a href={makeShopUrl({ category: entry.category })}><ProductIllustration label={entry.imageLabel} /><div><h3>{entry.title}</h3><p>{entry.description}</p><strong>View all {entry.category}</strong></div></a><div className="subcategory-links">{entry.subcategories.map((subcategory) => <a key={subcategory.value} href={makeShopUrl({ category: entry.category, subcategory: subcategory.value })}>{subcategory.label}</a>)}</div></article>)}</div></section>;
+  return <section className="category-directory"><div className="directory-heading"><a className="button ghost" href="/shop?all=1">Browse all parts</a></div><div className="category-directory-grid">{directoryCategories.map((entry) => <article className="category-directory-card" key={entry.category}><a href={makeShopUrl({ category: entry.category })}><ProductIllustration label={entry.imageLabel} variant={entry.illustrationVariant} showCaption={false} /><div><h3>{entry.title}</h3><p>{entry.description}</p><strong>View all {entry.title}</strong></div></a><div className="subcategory-links">{entry.subcategories.map((subcategory) => <a key={subcategory.value} href={makeShopUrl({ category: entry.category, subcategory: subcategory.value })}>{subcategory.label}</a>)}</div></article>)}</div></section>;
 }
 
 function Listing({ products, category, subcategory, sort, query, activeDirectoryCategory, onCategoryChange, onSortChange, resetFilters }: { products: typeof catalog; category: Category | ""; subcategory: string; sort: string; query: string; activeDirectoryCategory?: DirectoryCategory; onCategoryChange: (category: Category | "") => void; onSortChange: (sort: string) => void; resetFilters: () => void }) {
