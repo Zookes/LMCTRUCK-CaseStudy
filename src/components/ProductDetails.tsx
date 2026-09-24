@@ -12,8 +12,8 @@ declare global {
   }
 }
 
-const trackedProductSlug = "1973-80-dash-bezel";
-const trackedSourcePage = "/products/1973-80-dash-bezel";
+const trackedProductSlug = "square-body-led-headlight-set";
+const trackedSourcePage = "/products/square-body-led-headlight-set";
 
 function trackProductAddition(product: NonNullable<ReturnType<ReturnType<typeof useShop>["getProduct"]>>, quantity: number) {
   if (product.slug !== trackedProductSlug || typeof window === "undefined" || typeof window.gtag !== "function") return;
