@@ -37,6 +37,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [zip, setZipState] = useState("");
   const [hydrated, setHydrated] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
 
   useEffect(() => {
     try {
@@ -68,27 +69,38 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     persist(nextVehicle, cart, zip);
   };
   const addToCart = (productId: string, quantity = 1) => {
-    if (!findProductByIdOrSlug(productId)) return;
+    const product = findProductByIdOrSlug(productId);
+    if (!product) return;
     const nextCart = cart.some((item) => item.productId === productId)
       ? cart.map((item) => item.productId === productId ? { ...item, quantity: item.quantity + quantity } : item)
       : [...cart, { productId, quantity }];
     setCart(nextCart);
     persist(vehicle, nextCart, zip);
+    const updatedItem = nextCart.find((item) => item.productId === productId);
+    setStatusMessage(`Added ${product.name} to cart. Quantity: ${updatedItem?.quantity ?? quantity}.`);
   };
   const updateQuantity = (productId: string, quantity: number) => {
     if (!Number.isInteger(quantity) || quantity < 1) return;
+    const currentItem = cart.find((item) => item.productId === productId);
+    if (!currentItem || currentItem.quantity === quantity) return;
     const nextCart = cart.map((item) => item.productId === productId ? { ...item, quantity } : item);
     setCart(nextCart);
     persist(vehicle, nextCart, zip);
+    setStatusMessage(`Quantity for ${findProductByIdOrSlug(productId)?.name ?? "item"} changed to ${quantity}.`);
   };
   const removeFromCart = (productId: string) => {
+    const product = findProductByIdOrSlug(productId);
+    if (!cart.some((item) => item.productId === productId)) return;
     const nextCart = cart.filter((item) => item.productId !== productId);
     setCart(nextCart);
     persist(vehicle, nextCart, zip);
+    setStatusMessage(`Removed ${product?.name ?? "item"} from cart.`);
   };
   const clearCart = () => {
+    if (!cart.length) return;
     setCart([]);
     persist(vehicle, [], zip);
+    setStatusMessage("Removed all items from cart.");
   };
   const setZip = (nextZip: string) => {
     const normalizedZip = nextZip.replace(/\D/g, "").slice(0, 5);
@@ -97,7 +109,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   };
   const cartQuantity = useMemo(() => cart.reduce((total, item) => total + item.quantity, 0), [cart]);
 
-  return <ShopContext.Provider value={{ vehicle, setVehicle, cart, addToCart, updateQuantity, removeFromCart, clearCart, zip, setZip, hydrated, getProduct: findProductByIdOrSlug, cartQuantity }}>{children}</ShopContext.Provider>;
+  return <ShopContext.Provider value={{ vehicle, setVehicle, cart, addToCart, updateQuantity, removeFromCart, clearCart, zip, setZip, hydrated, getProduct: findProductByIdOrSlug, cartQuantity }}>{children}<p className={`toast${statusMessage ? " show" : ""}`} role="status" aria-live="polite" aria-atomic="true">{statusMessage}</p></ShopContext.Provider>;
 }
 
 export function useShop() {
