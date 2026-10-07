@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist } from "next/font/google";
 import { ShopProvider } from "@/lib/shop/ShopProvider";
 import "./globals.css";
 
@@ -9,13 +9,8 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-const pageUrl = siteUrl ? new URL("/", siteUrl).toString() : "/";
+const siteOrigin = "https://lmctruck-case-study.vercel.app";
+const pageUrl = new URL("/", siteOrigin).toString();
 
 const structuredData = [
   {
@@ -52,7 +47,7 @@ export const metadata: Metadata = {
   title: "LF Truck",
   description:
     "Browse restoration and replacement parts for 1973–1987 Chevy and GMC trucks. Select your exact vehicle or shop by part category.",
-  metadataBase: siteUrl ? new URL(siteUrl) : undefined,
+  metadataBase: new URL(siteOrigin),
   alternates: { canonical: "/" },
 };
 
@@ -60,7 +55,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <ShopProvider>{children}</ShopProvider>

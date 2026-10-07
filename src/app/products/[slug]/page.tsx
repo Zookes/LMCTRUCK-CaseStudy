@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import ProductDetails from "@/components/ProductDetails";
 import { SiteFooter, SiteHeader } from "@/components/ShopChrome";
 import { catalog } from "@/lib/shop/catalog";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  return { alternates: { canonical: `/products/${slug}` } };
+}
 
 export function generateStaticParams() {
   return catalog.map((product) => ({ slug: product.slug }));
