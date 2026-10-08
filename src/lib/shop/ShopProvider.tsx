@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, startTransition, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, startTransition, useCallback, useContext, useEffect, useMemo, useRef, useState, type FocusEvent, type ReactNode } from "react";
 import { findProductByIdOrSlug, type Product, type Vehicle } from "./catalog";
 
 type CartItem = { productId: string; quantity: number };
@@ -19,10 +19,66 @@ type ShopContextValue = {
   hydrated: boolean;
   getProduct: (productId: string) => Product | undefined;
   cartQuantity: number;
+  statusMessage: string;
+  dismissStatus: () => void;
 };
 
 const storageKey = "lftruck-shop-state";
+const statusDuration = 5000;
 const ShopContext = createContext<ShopContextValue | null>(null);
+
+// Only routine confirmations use this host; errors requiring action remain in their forms.
+function StatusToast({ message, onDismiss }: { message: string; onDismiss: () => void }) {
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timerStartedAt = useRef(0);
+  const remainingTime = useRef(statusDuration);
+  const isHovered = useRef(false);
+  const hasFocus = useRef(false);
+
+  const clearTimer = useCallback(() => {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = null;
+  }, []);
+  const startTimer = useCallback(() => {
+    clearTimer();
+    if (remainingTime.current <= 0) {
+      onDismiss();
+      return;
+    }
+    timerStartedAt.current = Date.now();
+    timer.current = setTimeout(onDismiss, remainingTime.current);
+  }, [clearTimer, onDismiss]);
+  const pauseTimer = useCallback(() => {
+    if (!timer.current) return;
+    remainingTime.current = Math.max(0, remainingTime.current - (Date.now() - timerStartedAt.current));
+    clearTimer();
+  }, [clearTimer]);
+
+  useEffect(() => {
+    remainingTime.current = statusDuration;
+    isHovered.current = false;
+    hasFocus.current = false;
+    startTimer();
+    return clearTimer;
+  }, [clearTimer, message, startTimer]);
+
+  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
+    if (event.currentTarget.contains(event.relatedTarget as Node | null)) return;
+    hasFocus.current = false;
+    if (!isHovered.current) startTimer();
+  };
+
+  return <div
+    className="toast show"
+    onMouseEnter={() => { isHovered.current = true; pauseTimer(); }}
+    onMouseLeave={() => { isHovered.current = false; if (!hasFocus.current) startTimer(); }}
+    onFocusCapture={() => { hasFocus.current = true; pauseTimer(); }}
+    onBlurCapture={handleBlur}
+  >
+    <p className="toast-message" role="status" aria-live="polite" aria-atomic="true">{message}</p>
+    <button type="button" className="toast-dismiss" aria-label="Dismiss notification" onClick={onDismiss}>Dismiss</button>
+  </div>;
+}
 
 const validCart = (value: unknown): CartItem[] => {
   if (!Array.isArray(value)) return [];
@@ -38,6 +94,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const [zip, setZipState] = useState("");
   const [hydrated, setHydrated] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
+  const dismissStatus = useCallback(() => setStatusMessage(""), []);
 
   useEffect(() => {
     try {
@@ -109,11 +166,16 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   };
   const cartQuantity = useMemo(() => cart.reduce((total, item) => total + item.quantity, 0), [cart]);
 
-  return <ShopContext.Provider value={{ vehicle, setVehicle, cart, addToCart, updateQuantity, removeFromCart, clearCart, zip, setZip, hydrated, getProduct: findProductByIdOrSlug, cartQuantity }}>{children}<p className={`toast${statusMessage ? " show" : ""}`} role="status" aria-live="polite" aria-atomic="true">{statusMessage}</p></ShopContext.Provider>;
+  return <ShopContext.Provider value={{ vehicle, setVehicle, cart, addToCart, updateQuantity, removeFromCart, clearCart, zip, setZip, hydrated, getProduct: findProductByIdOrSlug, cartQuantity, statusMessage, dismissStatus }}>{children}</ShopContext.Provider>;
 }
 
 export function useShop() {
   const context = useContext(ShopContext);
   if (!context) throw new Error("useShop must be used inside ShopProvider");
   return context;
+}
+
+export function ShopStatus() {
+  const { statusMessage, dismissStatus } = useShop();
+  return statusMessage ? <StatusToast key={statusMessage} message={statusMessage} onDismiss={dismissStatus} /> : null;
 }

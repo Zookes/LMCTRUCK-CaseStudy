@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { vehicleLabel, vehicleMakes, vehicleModels, vehicleYears, type Vehicle } from "@/lib/shop/catalog";
-import { useShop } from "@/lib/shop/ShopProvider";
+import { ShopStatus, useShop } from "@/lib/shop/ShopProvider";
 
 export function VehiclePicker({ compact = false }: { compact?: boolean }) {
   const { vehicle, setVehicle } = useShop();
@@ -63,6 +63,7 @@ export function SiteHeader() {
         <div className="nav-vehicle"><VehiclePicker compact /></div>
       </nav>
     </header>
+    <ShopStatus />
   </>;
 }
 
